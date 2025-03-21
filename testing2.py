@@ -257,7 +257,11 @@ def like_and_comment(driver, post_url, comment_text):
 
     # Attempt to click the Like button
     try:
-        like_button = driver.find_element(By.XPATH, "//div[@aria-label='Like']")
+        like_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@aria-label='Like']")))
+
+        
+        driver.execute_script("arguments[0].scrollIntoView();", like_button)
+        time.sleep(1)
         like_button.click()
         print("Liked the post!")
     except Exception as e:
@@ -267,7 +271,11 @@ def like_and_comment(driver, post_url, comment_text):
 
     # Attempt to post a comment
     try:
-        comment_box = driver.find_element(By.XPATH, "//div[@aria-label='Write a comment…']")
+        comment_box = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[@aria-label='Write a comment…']"))
+        )
+        driver.execute_script("arguments[0].scrollIntoView();", comment_box)
+        time.sleep(1)
         comment_box.click()
         time.sleep(2)
         comment_box.send_keys(comment_text)
@@ -287,6 +295,8 @@ def process_account(account, options):
             login_with_2fa(account, driver)
         time.sleep(5)
         like_and_comment(driver,POST_URL, COMMENT_TEXT)
+        time.sleep(3600)
+
         
     finally:
         driver.quit()
